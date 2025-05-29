@@ -7,7 +7,7 @@ export default function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="w-64 bg-gray-900:80 p-4 border-r border-gray-800">
+    <aside className="w-64 bg-gray-900/0 p-4">
       <h2 className="text-xl font-bold mb-6">🎵 BypassBeats</h2>
       <nav className="space-y-3">
         <NavItem icon={<Home size={18} />} label="Home" href="/dashboard" pathname={pathname} />
