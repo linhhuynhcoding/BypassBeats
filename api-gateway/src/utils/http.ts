@@ -1,15 +1,17 @@
-import axios from 'axios';
+import axios, { AxiosRequestConfig, Method } from 'axios';
 
-export const forwardRequest = async (
+export async function forwardRequest(
   url: string,
-  method: string,
-  data?: any,
-  headers = {},
-) => {
-  return axios({
+  method: Method,
+  data: any = null,
+  config: AxiosRequestConfig = {},
+) {
+  const finalConfig: AxiosRequestConfig = {
     url,
     method,
     data,
-    headers,
-  });
-};
+    ...config,
+  };
+
+  return axios.request(finalConfig);
+}

@@ -11,7 +11,7 @@ export class UserRoute {
       'POST',
       req.body,
     );
-    res.json(response.data);
+    res.status(response.status).set(response.headers).json(response.data);
   }
 
   @Post('playlist')
@@ -20,9 +20,13 @@ export class UserRoute {
       `${process.env.USER_SERVICE_URL}/playlist`,
       'POST',
       req.body,
-      { Authorization: req.headers.authorization },
+      {
+        headers: {
+          Authorization: req.headers.authorization || '',
+        },
+      },
     );
-    res.json(response.data);
+    res.status(response.status).set(response.headers).json(response.data);
   }
 
   @Get('playlist')
@@ -31,8 +35,12 @@ export class UserRoute {
       `${process.env.USER_SERVICE_URL}/playlist`,
       'GET',
       null,
-      { Authorization: req.headers.authorization },
+      {
+        headers: {
+          Authorization: req.headers.authorization || '',
+        },
+      },
     );
-    res.json(response.data);
+    res.status(response.status).set(response.headers).json(response.data);
   }
 }
