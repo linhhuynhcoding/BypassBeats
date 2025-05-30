@@ -9,7 +9,8 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
 
   const port = configService.get<number>('PORT') || 4000;
-  const kafkaBroker = configService.get<string>('KAFKA_BROKER') || 'kafka:9092';
+  const kafkaBroker =
+    configService.get<string>('KAFKA_BROKER') || 'localhost:9092';
 
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.KAFKA,

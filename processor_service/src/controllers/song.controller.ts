@@ -8,6 +8,7 @@ export class SongController {
 
   @Post('convert')
   async convert(@Body() body: { url: string }) {
+    console.log({ url: body.url });
     const result = await this.songService.downloadAndSaveSong(body.url);
     return { success: true, songId: result };
   }
