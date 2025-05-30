@@ -26,7 +26,13 @@ export class SongService {
     const m4aPath = path.join(storagePath, `${title}.m4a`);
     const mp3Path = path.join(storagePath, `${title}.mp3`);
 
-    // Download file .m4a
+    if (existsSync(m4aPath) && existsSync(mp3Path)) {
+      console.log(`[CACHE HIT] ${title} đã tồn tại`);
+      return title;
+    }
+
+    console.log(`[DOWNLOAD] Bắt đầu tải ${title}`);
+
     await new Promise<void>((resolve, reject) => {
       this.ytDlpWrap
         .exec([url, '-f', 'bestaudio[ext=m4a]', '-o', m4aPath, '--no-playlist'])
@@ -34,8 +40,9 @@ export class SongService {
         .on('error', (err) => reject(err));
     });
 
-    // Convert m4a sang mp3
-    await this.convertM4aToMp3(m4aPath, mp3Path);
+    if (!existsSync(mp3Path)) {
+      await this.convertM4aToMp3(m4aPath, mp3Path);
+    }
 
     return title;
   }
