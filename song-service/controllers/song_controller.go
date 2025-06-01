@@ -27,11 +27,10 @@ func CreateSongHandler(db *gorm.DB) gin.HandlerFunc {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
-		// song.UserID = c.GetString("userId")
-		// if err := services.CreateSong(db, &song); err != nil {
-		// 	c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		// 	return
-		// }
+		if err := services.CreateSong(db, &song); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
 		c.JSON(http.StatusCreated, song)
 	}
 }
