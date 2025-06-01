@@ -14,6 +14,7 @@ func RegisterRoutes(router *gin.Engine, db *gorm.DB) {
 	songGroup := router.Group("/songs")
 	{
 		songGroup.GET("", controllers.GetSongsHandler(db))
+		songGroup.GET("/:id", controllers.GetSongByIdHandler(db))
 		songGroup.POST("", controllers.CreateSongHandler(db))
 	}
 

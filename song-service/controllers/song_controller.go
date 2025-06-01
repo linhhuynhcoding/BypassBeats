@@ -35,3 +35,15 @@ func CreateSongHandler(db *gorm.DB) gin.HandlerFunc {
 		c.JSON(http.StatusCreated, song)
 	}
 }
+
+func GetSongByIdHandler(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		id := c.Param("id")
+		song, err := services.GetSongById(db, id)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, song)
+	}
+}
