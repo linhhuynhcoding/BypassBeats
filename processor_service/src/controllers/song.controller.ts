@@ -8,7 +8,7 @@ import {
   Headers,
   Query,
 } from '@nestjs/common';
-import { SongService } from '../services/song.service';
+import { SongService } from '../services/processor.service';
 import { Response } from 'express';
 import * as fs from 'fs';
 import * as path from 'path';

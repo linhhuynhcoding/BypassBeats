@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import * as fs from 'fs';
 import { existsSync } from 'fs';
 import { join, resolve } from 'path';
@@ -6,12 +6,15 @@ import YtDlpWrap from 'yt-dlp-wrap';
 import * as ffmpeg from 'fluent-ffmpeg';
 import * as ffmpegStatic from 'ffmpeg-static';
 import * as path from 'path';
+import { ClientKafka } from '@nestjs/microservices';
 
 @Injectable()
 export class SongService {
   private ytDlpWrap: YtDlpWrap;
 
-  constructor() {
+  constructor(
+    @Inject('KAFKA_PRODUCER') private readonly kafkaClient: ClientKafka,
+  ) {
     const binaryPath = resolve(__dirname, '../../bin/yt-dlp.exe');
     console.log('yt-dlp exists:', existsSync(binaryPath));
     this.ytDlpWrap = new YtDlpWrap(binaryPath);
