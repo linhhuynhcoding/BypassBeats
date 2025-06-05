@@ -10,10 +10,15 @@ import (
 	"gorm.io/gorm"
 )
 
+type SongConvertedMessage struct {
+	ID    string `json:"id"`
+	Title string `json:"title"`
+}
+
 func StartSongReadyConsumer(db *gorm.DB, broker string) {
 	r := kafka.NewReader(kafka.ReaderConfig{
 		Brokers: []string{broker},
-		Topic:   "processor.song-ready",
+		Topic:   "song.converted",
 		GroupID: "song-service",
 	})
 
@@ -21,16 +26,25 @@ func StartSongReadyConsumer(db *gorm.DB, broker string) {
 		for {
 			m, err := r.ReadMessage(context.Background())
 			if err != nil {
-				log.Println("Kafka error:", err)
+				log.Println("Kafka read error:", err)
 				continue
 			}
-			var song models.Song
-			if err := json.Unmarshal(m.Value, &song); err != nil {
-				log.Println("Invalid message format:", err)
+
+			var msg SongConvertedMessage
+			if err := json.Unmarshal(m.Value, &msg); err != nil {
+				log.Println("Invalid message:", err)
 				continue
 			}
-			db.Create(&song)
-			log.Println("Song saved from Kafka:", song.Title)
+
+			song := models.Song{
+				ID:    msg.ID,
+				Title: msg.Title,
+			}
+			if err := db.Create(&song).Error; err != nil {
+				log.Println("DB insert failed:", err)
+			} else {
+				log.Println("Song saved:", song.ID)
+			}
 		}
 	}()
 }

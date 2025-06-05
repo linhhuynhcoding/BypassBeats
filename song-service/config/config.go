@@ -3,6 +3,7 @@ package config
 import (
 	"log"
 	"os"
+	"song-service/models"
 
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
@@ -22,6 +23,11 @@ func LoadConfig() *Config {
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatal("Failed to connect DB:", err)
+	}
+
+	// 👇 Tự động tạo bảng
+	if err := db.AutoMigrate(&models.Song{}, &models.Playlist{}, &models.PlaylistItem{}); err != nil {
+		log.Fatal("Failed to migrate DB:", err)
 	}
 
 	return &Config{
