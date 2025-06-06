@@ -14,7 +14,7 @@ func GetAllSongs(db *gorm.DB) ([]models.Song, error) {
 
 func GetSongById(db *gorm.DB, id string) (models.Song, error) {
 	var song models.Song
-	err := db.Find(&song, id).Error
+	err := db.First(&song, "id = ?", id).Error
 	return song, err
 }
 
