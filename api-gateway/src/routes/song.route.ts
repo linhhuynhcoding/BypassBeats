@@ -1,102 +1,40 @@
 import {
   Controller,
+  UseInterceptors,
   Get,
   Post,
   Put,
   Delete,
-  Req,
-  Res,
   Param,
+  Inject,
 } from '@nestjs/common';
-import { forwardRequest } from '../utils/http';
-import { Request, Response } from 'express';
-
+import { ForwardInterceptor } from '../interceptors/forward.interceptor';
+const SONG_SERVICE_URL = 'SONG_SERVICE_URL';
 @Controller()
 export class SongRouter {
+  constructor() {}
+
   @Get('song/:id')
-  async getSongById(
-    @Req() req: Request,
-    @Res() res: Response,
-    @Param('id') id: string,
-  ) {
-    const response = await forwardRequest(
-      `${process.env.SONG_SERVICE_URL}/song/${id}`,
-      'GET',
-      null,
-      {
-        headers: {
-          Authorization: req.headers.authorization || '',
-        },
-      },
-    );
-    res.status(response.status).set(response.headers).json(response.data);
-  }
+  @UseInterceptors(new ForwardInterceptor(SONG_SERVICE_URL || '', '/songs/:id'))
+  getSongById() {}
 
   @Post('playlist')
-  async createPlaylist(@Req() req: Request, @Res() res: Response) {
-    const response = await forwardRequest(
-      `${process.env.SONG_SERVICE_URL}/playlist`,
-      'POST',
-      req.body,
-      {
-        headers: {
-          Authorization: req.headers.authorization || '',
-        },
-      },
-    );
-    res.status(response.status).set(response.headers).json(response.data);
-  }
+  @UseInterceptors(new ForwardInterceptor(SONG_SERVICE_URL || '', '/playlist'))
+  createPlaylist() {}
 
   @Get('playlist')
-  async getPlaylist(@Req() req: Request, @Res() res: Response) {
-    const response = await forwardRequest(
-      `${process.env.SONG_SERVICE_URL}/playlist`,
-      'GET',
-      null,
-      {
-        headers: {
-          Authorization: req.headers.authorization || '',
-        },
-      },
-    );
-    res.status(response.status).set(response.headers).json(response.data);
-  }
+  @UseInterceptors(new ForwardInterceptor(SONG_SERVICE_URL || '', '/playlist'))
+  getPlaylist() {}
 
   @Put('playlist/:id')
-  async updatePlaylist(
-    @Req() req: Request,
-    @Res() res: Response,
-    @Param('id') id: string,
-  ) {
-    const response = await forwardRequest(
-      `${process.env.SONG_SERVICE_URL}/playlist/${id}`,
-      'PUT',
-      req.body,
-      {
-        headers: {
-          Authorization: req.headers.authorization || '',
-        },
-      },
-    );
-    res.status(response.status).set(response.headers).json(response.data);
-  }
+  @UseInterceptors(
+    new ForwardInterceptor(SONG_SERVICE_URL || '', '/playlist/:id'),
+  )
+  updatePlaylist() {}
 
   @Delete('playlist/:id')
-  async deletePlaylist(
-    @Req() req: Request,
-    @Res() res: Response,
-    @Param('id') id: string,
-  ) {
-    const response = await forwardRequest(
-      `${process.env.SONG_SERVICE_URL}/playlist/${id}`,
-      'DELETE',
-      null,
-      {
-        headers: {
-          Authorization: req.headers.authorization || '',
-        },
-      },
-    );
-    res.status(response.status).set(response.headers).json(response.data);
-  }
+  @UseInterceptors(
+    new ForwardInterceptor(SONG_SERVICE_URL || '', '/playlist/:id'),
+  )
+  deletePlaylist() {}
 }
