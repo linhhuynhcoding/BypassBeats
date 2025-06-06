@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState } from 'react';
 
 interface PlayerContextType {
   currentSong: string | null;
-  setCurrentSong: (id: string) => void;
+  setCurrentSong: (id: string | null) => void;
 }
 
 const PlayerContext = createContext<PlayerContextType>({

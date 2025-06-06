@@ -9,13 +9,15 @@ import he from 'he';
 import { usePlayer } from '@/app/context/PlayerContext';
 import axios from 'axios';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+console.log(API_URL)
 export default function SearchPage() {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [converting, setConverting] = useState<{ [id: string]: boolean }>({});
 
-  const { setCurrentSong } = usePlayer();
+  const { currentSong, setCurrentSong } = usePlayer();
 
   const handleSearch = async () => {
     if (!query.trim()) return;
@@ -25,35 +27,38 @@ export default function SearchPage() {
     setLoading(false);
   };
 
-    const handlePlay = async (videoId: string) => {
-    if (converting[videoId]) return;
-
+  const handlePlay = async (videoId: string) => {
+      if (converting[videoId]) {
+          setCurrentSong(videoId);
+          console.log({videoId})
+          return;
+      }
     try {
-        const res = await axios.get(`/api/play/${videoId}`, {
-        responseType: 'blob',
-        });
-        if (res.status === 200) {
+      const checkRes = await axios.get(`${API_URL}/api/v1/song/${videoId}`);
+        if (checkRes.status === 200) {
+          console.log({videoId, currentSong})
         setCurrentSong(videoId);
         return;
-        }
+      }
     } catch (err: any) {
-        if (err?.response?.status !== 404) return;
+      if (err?.response?.status !== 404) {
+        console.error('Lỗi kiểm tra song:', err);
+        return;
+      }
     }
 
     setConverting((prev) => ({ ...prev, [videoId]: true }));
-
     try {
-        await axios.post(`/api/convert`, {
+      await axios.post(`${API_URL}/api/v1/convert`, {
         url: `https://www.youtube.com/watch?v=${videoId}`,
-        });
-        setCurrentSong(videoId);
+      });
+      setCurrentSong(videoId);
     } catch (err) {
-        console.error('Convert failed', err);
+      console.error('Convert failed', err);
     } finally {
-        setConverting((prev) => ({ ...prev, [videoId]: false }));
+      setConverting((prev) => ({ ...prev, [videoId]: false }));
     }
-    };
-
+  };
 
   return (
     <DashboardLayout>
@@ -92,7 +97,9 @@ export default function SearchPage() {
                 <div className="text-gray-900 dark:text-gray-100 font-medium">
                   {he.decode(item.title)}
                 </div>
-                {converting[videoId] && <div className="ml-auto animate-pulse">Converting...</div>}
+                {converting[videoId] && (
+                  <div className="ml-auto animate-pulse text-sm text-blue-500">Converting...</div>
+                )}
               </div>
             );
           })}

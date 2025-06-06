@@ -6,7 +6,6 @@ import { PlayerProvider } from '@/app/context/PlayerContext';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
-    <PlayerProvider>
       <div className="flex h-screen bg-gray-950:80 text-white">
         <Sidebar />
         <div className="flex-1 flex flex-col">
@@ -15,6 +14,5 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <Player />
         </div>
       </div>
-    </PlayerProvider>
   );
 }

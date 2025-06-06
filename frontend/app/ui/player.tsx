@@ -7,9 +7,11 @@ export default function Player() {
   const { currentSong } = usePlayer();
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  useEffect(() => {
-    if (currentSong && audioRef.current) {
-      audioRef.current.src = `/api/play/${currentSong}`;
+  console.log("player", audioRef, currentSong)
+    useEffect(() => {
+      if (currentSong && audioRef.current) {
+        console.log({currentSong})
+      audioRef.current.src = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/play/${currentSong}`;
       audioRef.current.play().catch(() => {});
     }
   }, [currentSong]);
@@ -22,7 +24,7 @@ export default function Player() {
         <button onClick={() => audioRef.current?.play()}>▶️</button>
         <button onClick={() => audioRef.current?.pause()}>⏸</button>
       </div>
-      <audio controls autoPlay src={`/api/play/${currentSong}`} />
+      <audio ref={audioRef} controls autoPlay src={`${process.env.NEXT_PUBLIC_API_URL}/api/v1/play/${currentSong}`} />
     </div>
   );
 }
