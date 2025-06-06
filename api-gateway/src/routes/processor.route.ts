@@ -2,7 +2,7 @@ import { Controller, Get, Post, Req, Res } from '@nestjs/common';
 import { forwardRequest } from '../utils/http';
 import { Request, Response } from 'express';
 
-@Controller('api')
+@Controller()
 export class ProcessorRoute {
   @Post('convert')
   async convert(@Req() req: Request, @Res() res: Response) {

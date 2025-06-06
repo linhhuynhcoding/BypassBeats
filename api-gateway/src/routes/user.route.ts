@@ -1,8 +1,8 @@
-import { Controller, Get, Post, Req, Res } from '@nestjs/common';
+import { Controller, Post, Req, Res } from '@nestjs/common';
 import { forwardRequest } from '../utils/http';
 import { Request, Response } from 'express';
 
-@Controller('api')
+@Controller()
 export class UserRoute {
   @Post('login')
   async login(@Req() req: Request, @Res() res: Response) {
@@ -14,32 +14,12 @@ export class UserRoute {
     res.status(response.status).set(response.headers).json(response.data);
   }
 
-  @Post('playlist')
-  async createPlaylist(@Req() req: Request, @Res() res: Response) {
+  @Post('register')
+  async register(@Req() req: Request, @Res() res: Response) {
     const response = await forwardRequest(
-      `${process.env.USER_SERVICE_URL}/playlist`,
+      `${process.env.USER_SERVICE_URL}/register`,
       'POST',
       req.body,
-      {
-        headers: {
-          Authorization: req.headers.authorization || '',
-        },
-      },
-    );
-    res.status(response.status).set(response.headers).json(response.data);
-  }
-
-  @Get('playlist')
-  async getPlaylist(@Req() req: Request, @Res() res: Response) {
-    const response = await forwardRequest(
-      `${process.env.USER_SERVICE_URL}/playlist`,
-      'GET',
-      null,
-      {
-        headers: {
-          Authorization: req.headers.authorization || '',
-        },
-      },
     );
     res.status(response.status).set(response.headers).json(response.data);
   }
